@@ -21,7 +21,24 @@ namespace Business.Concrete
         public void AddCar(Car car)
         {
             // Şartlar vs. vs.
-            _carDal.Add(car);
+            if(car.Description.Length<=2 || car.DailyPrice < 0)
+            {
+                if (car.Description.Length<2)
+                {
+                    Console.WriteLine("Eklenecek aracın ismi minimum 2 karakter olmalıdır!");
+                }
+                if (car.DailyPrice<=0)
+                {
+                    Console.WriteLine("Eklenecek aracın fiyatı 0'dan büyük olmalıdır");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Araç veri tabanına kaydedildi!\n");
+                _carDal.Add(car);
+                
+            }
+            
         }
 
         public void DeleteCar(Car car)
@@ -38,13 +55,13 @@ namespace Business.Concrete
 
         public List<Car> GetByBrandId(int brandId)
         {
-            return _carDal.GetByBrandId(brandId);
+            return _carDal.GetAll(c => c.BrandId == brandId);
         }
 
         public List<Car> GetByColorId(int colorId)
         {
             // Şartlar vs. vs.
-            return _carDal.GetByColorId(colorId);
+            return _carDal.GetAll(c => c.ColorId == colorId);
         }
 
         public void UpdateCar(Car car)
