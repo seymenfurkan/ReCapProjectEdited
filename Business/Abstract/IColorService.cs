@@ -12,7 +12,8 @@ namespace Business.Abstract
         void AddColor(Color color);
         void DeleteColor(Color color);
         void UpdateColor(Color color);
-        List<Color> GetAllColor();
+        Color GetByColor(int colorId);
+        List<Color> GetAllColors();
        
 
 
