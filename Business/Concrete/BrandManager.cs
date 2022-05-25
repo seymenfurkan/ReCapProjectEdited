@@ -1,4 +1,7 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results.Abstract;
+using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -18,29 +21,67 @@ namespace Business.Concrete
             _brandDal = brandDal;
         }
 
-        public void AddBrand(Brand brand)
+        public IResult AddBrand(Brand brand)
         {
-            _brandDal.Add(brand);
+            if (DateTime.Now.Hour == 17)
+            {
+                return new ErrorResult(Messages.MaintenanceTime);
+            }
+            else
+            {
+                _brandDal.Add(brand);
+                return new SuccessResult(Messages.BrandAdded);
+            }
         }
 
-        public void DeleteBrand(Brand brand)
+        public IResult DeleteBrand(Brand brand)
         {
-            _brandDal.Delete(brand);
+            if (DateTime.Now.Hour == 17)
+            {
+                return new ErrorResult(Messages.MaintenanceTime);
+            }
+            else
+            {
+                _brandDal.Delete(brand);
+                return new SuccessResult(Messages.BrandDeleted);
+            }
         }
 
-        public List<Brand> GetAllBrands()
+        public IDataResult <List<Brand>> GetAllBrands()
         {
-            return _brandDal.GetAll();
+            if (DateTime.Now.Hour == 17)
+            {
+                return new ErrorDataResult<List<Brand>>(Messages.MaintenanceTime);
+            }
+            else
+            {
+                return new SuccessDataResult<List<Brand>>(_brandDal.GetAll(), Messages.ListOfBrands);
+            }
         }
 
-        public Brand GetByBrand(int brandId)
+        public IDataResult <Brand> GetByBrand(int brandId)
         {
-            return _brandDal.Get(b => b.BrandId == brandId);
+            if (DateTime.Now.Hour == 17)
+            {
+                return new ErrorDataResult<Brand>(Messages.MaintenanceTime);
+            }
+            else
+            {
+                return new SuccessDataResult<Brand>(_brandDal.Get(b => b.BrandId == brandId), Messages.ColorDetail);
+            }
         }
 
-        public void UpdateBrand(Brand brand)
+        public IResult UpdateBrand(Brand brand)
         {
-            _brandDal.Update(brand);
+            if (DateTime.Now.Hour == 17)
+            {
+                return new ErrorResult(Messages.MaintenanceTime);
+            }
+            else
+            {
+                _brandDal.Update(brand);
+                return new SuccessResult(Messages.BrandUpdated);
+            }
         }
     }
 }
