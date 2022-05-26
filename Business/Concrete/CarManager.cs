@@ -45,16 +45,14 @@ namespace Business.Concrete
             {
                 return new ErrorResult(Messages.MaintenanceTime);
             }
-            else
-            {
-                _carDal.Delete(car);
-                return new SuccessResult(Messages.CarDeleted);
-            }
+             _carDal.Delete(car);
+            return new SuccessResult(Messages.CarDeleted);
+            
         }
 
         public IDataResult<List<Car>> GetAllCar()
         {
-            if (DateTime.Now.Hour == 17)
+            if (DateTime.Now.Hour == 13)
             {
                 return new ErrorDataResult<List<Car>>(Messages.MaintenanceTime);
             }
@@ -77,13 +75,13 @@ namespace Business.Concrete
 
         public IDataResult <Car> GetById(int carId)
         {
-            if (DateTime.Now.Hour==17)
+            if (DateTime.Now.Hour == 13)
             {
                 return new ErrorDataResult<Car>(Messages.MaintenanceTime);
             }
             else
             {
-                 return new SuccessDataResult<Car> (_carDal.Get(c => c.CarId == carId));
+                 return new SuccessDataResult<Car> (_carDal.Get(c => c.CarId == carId),Messages.CarInfo);
             }
         }
 

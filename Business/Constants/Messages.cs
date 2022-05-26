@@ -16,6 +16,7 @@ namespace Business.Constants
         public static string CarDeleted = "Araç bilgileri veritabanından silindi!";
         public static string CarUpdated = "Araç bilgileri güncellendi";
         public static string ListOfCars = "Araçlar Listesi";
+        public static string CarInfo = "Araç Bilgileri";
 
 
         public static string ColorAdded = "Renk veri tabanına kaydedildi!\n";
