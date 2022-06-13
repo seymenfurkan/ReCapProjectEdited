@@ -51,16 +51,7 @@ namespace Business.Constants
         public static string UserUpdated = "Kullanıcı bilgisi güncellendi!\n";
         public static string ListOfUsers = "Kullanıcılar Listeleniyor!\n";
         public static string UserInfo = "Kullanıcı bilgileri : \n";
-
-
-
-
-
-
-
-
-
-
-
+        public static string CarCountOfColorError = "Bir araba en fazla 5 renk seçeneğine sahiptir!\n";
+        public static string CarNameExistBefore = "Aynı araç ismine sahip başka bir araç daha vardır!";
     }
 }

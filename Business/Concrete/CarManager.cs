@@ -1,8 +1,10 @@
 ﻿using Business.Abstract;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
@@ -19,31 +21,41 @@ namespace Business.Concrete
     public class CarManager : ICarService
     {
         ICarDal _carDal;
+        
+
 
         public CarManager(ICarDal carDal)
         {
             _carDal = carDal;
+            
         }
 
         [ValidationAspect(typeof(CarValidator))]
         public IResult AddCar(Car car)
         {
-                    
-                _carDal.Add(car);
-                return new SuccessResult(Messages.CarAdded);
-            
-                   
+            IResult result = BusinessRules.Run(CheckIfCarNameExist(car.Description),
+                 CheckIfCarCountOfColorCorrect(car.ColorId));
+
+            if (result != null)
+            {
+                return result;
+            }
+           
+
+            _carDal.Add(car);
+            return new SuccessResult(Messages.CarAdded);
+
         }
 
         public IResult DeleteCar(Car car)
         {
-            if (DateTime.Now.Hour==17)
+            if (DateTime.Now.Hour == 17)
             {
                 return new ErrorResult(Messages.MaintenanceTime);
             }
-             _carDal.Delete(car);
+            _carDal.Delete(car);
             return new SuccessResult(Messages.CarDeleted);
-            
+
         }
 
         public IDataResult<List<Car>> GetAllCar()
@@ -54,7 +66,7 @@ namespace Business.Concrete
             }
             else
             {
-                return new SuccessDataResult<List<Car>> (_carDal.GetAll(), Messages.ListOfCars);
+                return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.ListOfCars);
             }
         }
 
@@ -69,7 +81,7 @@ namespace Business.Concrete
             return _carDal.GetAll(c => c.ColorId == colorId);
         }
 
-        public IDataResult <Car> GetById(int carId)
+        public IDataResult<Car> GetById(int carId)
         {
             if (DateTime.Now.Hour == 13)
             {
@@ -77,11 +89,11 @@ namespace Business.Concrete
             }
             else
             {
-                 return new SuccessDataResult<Car> (_carDal.Get(c => c.CarId == carId),Messages.CarInfo);
+                return new SuccessDataResult<Car>(_carDal.Get(c => c.CarId == carId), Messages.CarInfo);
             }
         }
 
-        public IDataResult <List<CarDetailDto>> GetCarDetails()
+        public IDataResult<List<CarDetailDto>> GetCarDetails()
         {
             if (DateTime.Now.Hour == 17)
             {
@@ -89,21 +101,42 @@ namespace Business.Concrete
             }
             else
             {
-            return new SuccessDataResult<List<CarDetailDto>> (_carDal.GetCarDetails());
+                return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails());
             }
         }
 
         public IResult UpdateCar(Car car)
         {
-            if (DateTime.Now.Hour== 17)
+            if (DateTime.Now.Hour == 17)
             {
                 return new ErrorResult(Messages.MaintenanceTime);
             }
             else
             {
-            _carDal.Update(car);
+                _carDal.Update(car);
                 return new SuccessResult(Messages.CarUpdated);
             }
         }
+
+        private IResult CheckIfCarCountOfColorCorrect(int colorId)
+        {
+            var result = _carDal.GetAll(c => c.ColorId == colorId).Count;
+            if (result >= 5)
+            {
+                return new ErrorResult(Messages.CarCountOfColorError);
+            }
+            return new SuccessResult();
+        }
+        private IResult CheckIfCarNameExist(string description)
+        {
+            var result = _carDal.GetAll(c => c.Description == description).Any();
+            if (result)
+            {
+                return new ErrorResult(Messages.CarNameExistBefore);
+            }
+            return new SuccessResult();
+        }
+
+        
     }
 }
